@@ -1,0 +1,11 @@
+venv/
+.venv/
+
+__pycache__/
+*.pyc
+.pytest_cache/
+
+.vscode/
+dados.db
+*.txt
+!requirements.txt
