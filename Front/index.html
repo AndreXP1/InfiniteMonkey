@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#101713" />
+    <title>Infinite Monkey | Word Search</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero">
+        <p class="eyebrow">Infinite Monkey</p>
+        <h1>Find the hidden word.</h1>
+        <p class="intro">
+          Generate a fresh field of random characters and see what appears.
+        </p>
+      </section>
+
+      <section class="game-card" aria-labelledby="grid-title">
+        <div class="toolbar">
+          <div>
+            <p class="section-label">Character field</p>
+            <h2 id="grid-title">Your word search</h2>
+          </div>
+          <div class="controls">
+            <label for="amount">Characters</label>
+            <input id="amount" type="number" min="1" max="5000" value="144" />
+            <button id="generate" type="button">Generate</button>
+          </div>
+        </div>
+
+        <div class="word-search">
+          <label for="word">Highlight a word</label>
+          <div class="word-controls">
+            <input id="word" type="search" list="dictionary" placeholder="Type an English word" autocomplete="off" />
+            <datalist id="dictionary"></datalist>
+            <button id="highlight" type="button">Highlight</button>
+          </div>
+        </div>
+
+        <div class="status-row" aria-live="polite">
+          <span id="status">Ready to generate</span>
+          <span id="count">0 characters</span>
+        </div>
+        <div id="grid" class="character-grid" role="grid" aria-label="Generated characters"></div>
+      </section>
+    </main>
+    <script src="/static/app.js"></script>
+  </body>
+</html>

@@ -3,7 +3,7 @@ from datetime import date, datetime
 import string
 
 
-CHAR_SET = np.frombuffer(string.ascii_letters.encode('ascii'), dtype = np.uint8)
+CHAR_SET = np.frombuffer(string.ascii_uppercase.encode('ascii'), dtype = np.uint8)
 
 
 def generate_random_chars(size: int, size_block: int = 65536):

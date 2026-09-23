@@ -1,0 +1,211 @@
+:root {
+  color-scheme: dark;
+  --background: #101713;
+  --surface: #18221c;
+  --surface-light: #223129;
+  --border: #33463a;
+  --text: #f1f5ec;
+  --muted: #9eafa1;
+  --accent: #c7f36b;
+  --accent-dark: #18220f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: radial-gradient(circle at 80% 0%, #2b4330 0, var(--background) 38rem);
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.app-shell {
+  width: min(1080px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 5rem 0;
+}
+
+.hero {
+  max-width: 620px;
+  margin-bottom: 3rem;
+}
+
+.eyebrow,
+.section-label {
+  margin: 0 0 0.75rem;
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+h1,
+h2 {
+  margin: 0;
+  letter-spacing: -0.04em;
+}
+
+h1 {
+  font-size: clamp(3rem, 8vw, 6.5rem);
+  line-height: 0.95;
+}
+
+h2 {
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+}
+
+.intro {
+  max-width: 440px;
+  margin: 1.5rem 0 0;
+  color: var(--muted);
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.game-card {
+  padding: clamp(1.25rem, 4vw, 2.25rem);
+  border: 1px solid var(--border);
+  border-radius: 1.5rem;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  box-shadow: 0 2rem 5rem rgb(0 0 0 / 20%);
+}
+
+.toolbar,
+.status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.controls label {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.word-search {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 2rem;
+}
+
+.word-search > label {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.word-controls {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.word-controls input {
+  width: min(100%, 22rem);
+  text-align: left;
+}
+
+input,
+button {
+  border: 1px solid var(--border);
+  border-radius: 0.65rem;
+  font: inherit;
+}
+
+input {
+  width: 5.2rem;
+  padding: 0.65rem 0.5rem;
+  background: var(--background);
+  color: var(--text);
+  text-align: center;
+}
+
+button {
+  padding: 0.7rem 1rem;
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-dark);
+  cursor: pointer;
+  font-weight: 800;
+}
+
+button:hover {
+  filter: brightness(1.08);
+}
+
+button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.status-row {
+  margin: 2rem 0 1rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.character-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--columns, 12), minmax(0, 1fr));
+  gap: 0.35rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  background: var(--background);
+}
+
+.character {
+  display: grid;
+  aspect-ratio: 1;
+  place-items: center;
+  min-width: 0;
+  border-radius: 0.35rem;
+  background: var(--surface-light);
+  color: var(--accent);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: clamp(0.7rem, 2vw, 1.2rem);
+  font-weight: 700;
+}
+
+.character.is-highlighted {
+  background: var(--accent);
+  color: var(--accent-dark);
+  box-shadow: 0 0 0 2px rgb(199 243 107 / 25%);
+}
+
+@media (max-width: 640px) {
+  .app-shell {
+    padding: 3rem 0;
+  }
+
+  .toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .controls {
+    width: 100%;
+  }
+
+  .controls input {
+    margin-left: auto;
+  }
+
+  .word-controls {
+    flex-direction: column;
+  }
+
+  .word-controls input {
+    width: 100%;
+  }
+}
