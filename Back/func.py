@@ -1,10 +1,10 @@
-import numpy as np
-from datetime import date, datetime
 import string
 
+import numpy as np
+import requests
 
 CHAR_SET = np.frombuffer(string.ascii_uppercase.encode('ascii'), dtype = np.uint8)
-
+rng = np.random.default_rng()
 
 def generate_random_chars(size: int, size_block: int = 65536):
     generate = 0
@@ -14,3 +14,11 @@ def generate_random_chars(size: int, size_block: int = 65536):
         yield CHAR_SET[index].tobytes()
         generate += bytes_to_gen
 
+
+def get_random_words():
+    single_int = rng.integers(3, 10)
+    url = f"https://random-word-api.herokuapp.com/word?number={single_int}"
+
+    res = requests.get(url, timeout=10)
+    res.raise_for_status()
+    return [word.upper() for word in res.json()]

@@ -115,6 +115,28 @@ h2 {
   text-align: left;
 }
 
+.generated-words {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 1rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.word-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.word-chip {
+  padding: 0.45rem 0.7rem;
+  border-color: var(--border);
+  background: var(--surface-light);
+  color: var(--text);
+  font-size: 0.8rem;
+}
+
 input,
 button {
   border: 1px solid var(--border);

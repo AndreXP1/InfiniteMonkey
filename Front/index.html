@@ -33,8 +33,7 @@
         <div class="word-search">
           <label for="word">Highlight a word</label>
           <div class="word-controls">
-            <input id="word" type="search" list="dictionary" placeholder="Type an English word" autocomplete="off" />
-            <datalist id="dictionary"></datalist>
+            <input id="word" type="search" placeholder="Type an English word" autocomplete="off" />
             <button id="highlight" type="button">Highlight</button>
           </div>
         </div>
@@ -44,7 +43,8 @@
           <span id="count">0 characters</span>
         </div>
         <div id="grid" class="character-grid" role="grid" aria-label="Generated characters"></div>
-      </section>
+          <div id="word-list" class="word-list" aria-live="polite" hidden></div>
+        </section>
     </main>
     <script src="/static/app.js"></script>
   </body>
