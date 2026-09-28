@@ -52,12 +52,17 @@ function renderWordList(words) {
 
 function highlightWord() {
   const word = wordInput.value.trim().toUpperCase();
-  grid.querySelectorAll(".character").forEach((cell, index) => {
-    cell.classList.toggle("is-highlighted", foundWordIndices.has(index));
-  });
+  const hiddenWord = generatedWords.find(
+    (hiddenWord) => hiddenWord.toUpperCase() === word,
+  );
 
   if (!word) {
     status.textContent = "Type a word to highlight";
+    return;
+  }
+
+  if(!hiddenWord){
+    status.textContent = `"${word}" was not found in the list`;
     return;
   }
 
@@ -92,18 +97,18 @@ function highlightWord() {
     }
   }
 
-  const hiddenWord = generatedWords.find(
-    (hiddenWord) => hiddenWord.toUpperCase() === word,
-  );
-  if (matches.size > 0 && hiddenWord) {
+  if (matches.size > 0) {
     foundWords.add(hiddenWord);
     matches.forEach((index) => foundWordIndices.add(index));
     renderWordList([...foundWords]);
+
+    grid.querySelectorAll(".character").forEach((cell, index)=>{
+      cell.classList.toggle("is-highlighted", foundWordIndices.has(index));
+    });
+    status.textContent = `"${word}" found and highlighted`;
+  }else{
+    status.textContent = `"${word}" was not nout in this field`;
   }
-  matches.forEach((index) => grid.children[index]?.classList.add("is-highlighted"));
-  status.textContent = matches.size > 0
-    ? `"${word}" found and highlighted`
-    : `"${word}" was not found in this field`;
 }
 
 function shuffle(items) {
@@ -183,7 +188,11 @@ async function generateCharacters() {
     }
     const characters = await charactersResponse.text();
     const { words } = await wordsResponse.json();
-    const inserted = insertWords(characters, words);
+    const normalizedWords = words
+      .filter((word) => typeof word === "string")
+      .map((word) => word.trim().toUpperCase())
+      .filter(Boolean);
+    const inserted = insertWords(characters, normalizedWords);
     generatedWords = inserted.words;
     foundWords = new Set();
     foundWordIndices = new Set();

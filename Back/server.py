@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
-from func import generate_random_chars, get_random_words
+from func import generate_random_chars, get_random_words, game_words
 
 
 app = FastAPI()
@@ -32,5 +32,4 @@ def generate(ammount: int = 5000):
 
 @app.get("/words")
 def words():
-    print(get_random_words())
     return {"words": get_random_words()}
