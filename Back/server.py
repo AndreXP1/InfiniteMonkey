@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
-from func import generate_random_chars, get_random_words, game_words
+from Back.func import generate_random_chars, get_random_words
 
 
 app = FastAPI()
