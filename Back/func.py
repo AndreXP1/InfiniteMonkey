@@ -5,7 +5,6 @@ import requests
 
 CHAR_SET = np.frombuffer(string.ascii_uppercase.encode('ascii'), dtype = np.uint8)
 rng = np.random.default_rng()
-game_words = []
 
 def generate_random_chars(size: int, size_block: int = 65536):
     generate = 0
@@ -23,5 +22,4 @@ def get_random_words():
 
     res = requests.get(url, timeout=10)
     res.raise_for_status()
-    game_words = [word.upper() for word in res.json()]
-    return game_words
+    return [word.upper() for word in res.json()]
