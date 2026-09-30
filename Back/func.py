@@ -1,12 +1,13 @@
 import string
 import math
+import string
 import numpy as np
 import requests
 
 CHAR_SET = np.frombuffer(string.ascii_uppercase.encode('ascii'), dtype = np.uint8)
 rng = np.random.default_rng()
 
-DIRECTiONS = [
+DIRECTIONS = [
     (0, 1),(0, -1),(1, 0),(-1, 0),
     (1, 1),(1, -1),(-1, 1),(-1, -1)
 ]
@@ -76,3 +77,27 @@ def generate_game_grid(amount: int) -> tuple[str, list[str]]:
     grid_string = grid.tobytes().decode("ascii")
     return grid_string, placed_words
 
+
+
+def find_word_indices(word:str, grid_string: str) -> list[int]:
+    word_bytes = np.frombuffer(word.strip().upper().encode("ascii"), dtype=np.uint8)
+    w_len = len(word_bytes)
+
+    cols, rows = get_grid_shape(len(grid_string))
+    grid_bytes = np.frombuffer(grid_string.encode("ascii"), dtype=np.uint8)
+    grid = grid_bytes.reshape((rows, cols))
+
+    matches = set()
+
+    for r in range(rows):
+        for c in range(cols):
+            for dr, dc in DIRECTIONS:
+                r_idx = r + np.arange(w_len) * dr
+                c_idx = c + np.arange(w_len) * dc
+
+                if np.all((0 <= r_idx) & (r_idx < rows) & (0 <= c_idx) & (c_idx < cols)):
+                    if np.array_equal(grid[r_idx, c_idx], word_bytes):
+                        flat_indices = r_idx * cols + c_idx
+                        matches.update(flat_indices.tolist())
+
+    return sorted(list(matches))
