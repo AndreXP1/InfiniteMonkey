@@ -7,7 +7,7 @@ const status = document.querySelector("#status");
 const count = document.querySelector("#count");
 const wordList = document.querySelector("#word-list");
 let generatedCharacters = "";
-let generatedWords = [];
+let currentGameId = null
 let foundWords = new Set();
 let foundWordIndices = new Set();
 
