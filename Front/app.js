@@ -6,6 +6,7 @@ const grid = document.querySelector("#grid");
 const status = document.querySelector("#status");
 const count = document.querySelector("#count");
 const wordList = document.querySelector("#word-list");
+
 let generatedCharacters = "";
 let currentGameId = null
 let foundWords = new Set();
@@ -50,121 +51,54 @@ function renderWordList(words) {
   );
 }
 
-function highlightWord() {
+async function highlightWord() {
   const word = wordInput.value.trim().toUpperCase();
-  const hiddenWord = generatedWords.find(
-    (hiddenWord) => hiddenWord.toUpperCase() === word,
-  );
 
   if (!word) {
     status.textContent = "Type a word to highlight";
     return;
   }
 
-  if(!hiddenWord){
-    status.textContent = `"${word}" was not found in the list`;
+  if(!currentGameId){
+    status.textContent = `"Generate grid first"`;
     return;
   }
 
-  const { columns, rows } = getGridShape(generatedCharacters.length);
-  const matches = new Set();
-  const directions = [[0, 1], [1, 1], [1, -1]];
+  status.textContent = "Searching..."
 
-  for (let row = 0; row < rows; row += 1) {
-    for (let column = 0; column < columns; column += 1) {
-      for (const [rowStep, columnStep] of directions) {
-        const indices = [];
-        for (let offset = 0; offset < word.length; offset += 1) {
-          const nextRow = row + rowStep * offset;
-          const nextColumn = column + columnStep * offset;
-          const index = nextRow * columns + nextColumn;
-          if (
-            nextRow < 0 ||
-            nextRow >= rows ||
-            nextColumn < 0 ||
-            nextColumn >= columns ||
-            index >= generatedCharacters.length ||
-            generatedCharacters[index] !== word[offset]
-          ) {
-            break;
-          }
-          indices.push(index);
-        }
-        if (indices.length === word.length) {
-          indices.forEach((index) => matches.add(index));
-        }
-      }
-    }
-  }
-
-  if (matches.size > 0) {
-    foundWords.add(hiddenWord);
-    matches.forEach((index) => foundWordIndices.add(index));
-    renderWordList([...foundWords]);
-
-    grid.querySelectorAll(".character").forEach((cell, index)=>{
-      cell.classList.toggle("is-highlighted", foundWordIndices.has(index));
+  try{
+    const response = await fetch("/api/game/guess", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        game_id: currentGameId,
+        word: word,
+      }),
     });
-    status.textContent = `"${word}" found and highlighted`;
-  }else{
-    status.textContent = `"${word}" was not nout in this field`;
-  }
-}
-
-function shuffle(items) {
-  for (let index = items.length - 1; index > 0; index -= 1) {
-    const randomIndex = Math.floor(Math.random() * (index + 1));
-    [items[index], items[randomIndex]] = [items[randomIndex], items[index]];
-  }
-  return items;
-}
-
-function insertWords(characters, words) {
-  const cells = [...characters];
-  const occupied = new Set();
-  const { columns, rows } = getGridShape(cells.length);
-  const directions = [[0, 1], [1, 1], [1, -1]];
-  const placedWords = [];
-
-  for (const word of words) {
-    const candidates = [];
-    for (let row = 0; row < rows; row += 1) {
-      for (let column = 0; column < columns; column += 1) {
-        for (const [rowStep, columnStep] of directions) {
-          const indices = [];
-          let valid = true;
-          for (let offset = 0; offset < word.length; offset += 1) {
-            const nextRow = row + rowStep * offset;
-            const nextColumn = column + columnStep * offset;
-            const index = nextRow * columns + nextColumn;
-            if (
-              nextRow < 0 ||
-              nextRow >= rows ||
-              nextColumn < 0 ||
-              nextColumn >= columns ||
-              index >= cells.length ||
-              (occupied.has(index) && cells[index] !== word[offset])
-            ) {
-              valid = false;
-              break;
-            }
-            indices.push(index);
-          }
-          if (valid) candidates.push(indices);
-        }
-      }
+    
+    if(!response.ok){
+      throw new Error("Guess validation failed");
     }
 
-    const placement = shuffle(candidates)[0];
-    if (!placement) continue;
-    placement.forEach((index, offset) => {
-      cells[index] = word[offset];
-      occupied.add(index);
-    });
-    placedWords.push(word);
-  }
+    const result = await response.json();
 
-  return { characters: cells.join(""), words: placedWords };
+    if (result.found){
+      foundWords.add(word);
+      result.indices.forEach((index)=>foundWordIndices.add(index));
+
+      renderWordList([...foundWords]);
+
+      grid.querySelectorAll(".character").forEach((cell, index)=>{
+        cell.classList.toggle("is-highlighted", foundWordIndices.has(index));
+      });
+      status.textContent = result.message || `"${word} found and highlighted"`;
+    }else{
+      status.textContent = result.message || `"${word} was not found"`;
+    }
+  }catch (error){
+    status.textContent = "Error checking word";
+    console.error(error);
+  }
 }
 
 async function generateCharacters() {
@@ -179,34 +113,24 @@ async function generateCharacters() {
   status.textContent = "Generating...";
 
   try {
-    const [charactersResponse, wordsResponse] = await Promise.all([
-      fetch(`/gen?ammount=${amount}`),
-      fetch("/words"),
-    ]);
-    if (!charactersResponse.ok || !wordsResponse.ok) {
-      throw new Error("Generation failed");
+    const response = await fetch(`/api/game/new?amount=${amount}`);
+    if (!response.ok){
+      throw new Error("Generations failed");
     }
-    const characters = await charactersResponse.text();
-    const { words } = await wordsResponse.json();
-    const normalizedWords = words
-      .filter((word) => typeof word === "string")
-      .map((word) => word.trim().toUpperCase())
-      .filter(Boolean);
-    const inserted = insertWords(characters, normalizedWords);
-    generatedWords = inserted.words;
+
+    const data = await response.json();
+
+    currentGameId = data.game_id;
     foundWords = new Set();
     foundWordIndices = new Set();
-    renderCharacters(inserted.characters);
+
+    renderCharacters(data.characters);
     renderWordList([]);
-    if (wordInput.value) {
-      highlightWord();
-    } else {
-      status.textContent = "Fresh field generated";
-    }
-  } catch (error) {
+    status.textContent = "Fresh field generated";
+  }catch(error){
     status.textContent = "Could not generate characters";
     console.error(error);
-  } finally {
+  }finally{
     generateButton.disabled = false;
   }
 }
