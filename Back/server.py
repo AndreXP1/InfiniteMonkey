@@ -6,10 +6,6 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from Back.func import find_word_indices, generate_game_grid
-from Back.process_words import clean_dictionary
-
-
-clean_dictionary("words_en.txt", "words_en_clean.txt")
 
 app = FastAPI()
 FRONTEND_DIR = Path(__file__).resolve().parent.parent / "Front"
@@ -34,7 +30,7 @@ async def root():
 def create_game(amount: int = 100):
     if amount < 1 or amount > 5000:
         raise HTTPException(
-            satus_code=400, detail="Amount must be between 1 and 5000"
+            status_code=400, detail="Amount must be between 1 and 5000"
         )
 
     grid_string, placed_words = generate_game_grid(amount)
@@ -49,7 +45,7 @@ def create_game(amount: int = 100):
     return {"game_id": game_id, "characters": grid_string}
 
 
-DICTIONARY_FILE = Path(__file__).parent / "words_en_clean.txt"
+DICTIONARY_FILE = Path(__file__).resolve().parent / "words_en_clean.txt"
 with open(DICTIONARY_FILE, "r", encoding="utf-8") as f:
     VALID_DICTIONARY = set(word.strip().upper() for word in f if word.strip())
 

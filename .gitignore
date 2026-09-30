@@ -8,3 +8,5 @@ __pycache__/
 .vscode/
 *.txt
 !requirements.txt
+!Back/words_en.txt
+!Back/words_en_clean.txt
