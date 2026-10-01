@@ -10,3 +10,6 @@ __pycache__/
 !requirements.txt
 !Back/words_en.txt
 !Back/words_en_clean.txt
+.env
+.env.*
+!.env.example
